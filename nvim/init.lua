@@ -117,6 +117,28 @@ require("packer").startup(function(use)
   use("windwp/nvim-autopairs")
   -- use("numToStr/Comment.nvim")
   use("tpope/vim-commentary")
+  use("nvim-neotest/nvim-nio")
+
+  -- rust
+  use {
+        "nvim-neotest/neotest",
+        requires = {
+            "nvim-neotest/nvim-nio",
+            "nvim-lua/plenary.nvim",
+            "nvim-treesitter/nvim-treesitter",
+            "antoinemadec/FixCursorHold.nvim",
+        }
+    }
+  use("rouge8/neotest-rust")
+
+  use {
+    "alexpasmantier/tv.nvim",
+    config = function()
+      require("tv").setup{
+        -- your config here (see Configuration section below)
+      }
+    end,
+  }
 
   if packer_bootstrap then
     require("packer").sync()
@@ -142,7 +164,6 @@ local mason = require("mason")
 -- local mason_lspconfig = require("mason-lspconfig")
 local mason_tool_installer = require("mason-tool-installer")
 
-vim.lsp.enable("rust_analyzer")
 
 
 -- ==========================================
@@ -153,6 +174,13 @@ require("nvim-treesitter").setup({
   sync_install = false,
   highlight = { enable = true },
   indent = { enable = true },
+})
+-- OTHER RUST STUFF
+vim.lsp.enable("rust_analyzer")
+require("neotest").setup({
+  adapters = {
+    require("neotest-rust"),
+  },
 })
 
 -- ==========================================
@@ -185,7 +213,6 @@ cmp.setup({
 -- ==========================================
 require("gitsigns").setup()
 require("nvim-autopairs").setup()
-require("Comment").setup()
 
 
 -- ==========================================
