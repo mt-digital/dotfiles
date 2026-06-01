@@ -30,12 +30,18 @@ vim.opt.hlsearch = false
 -- Cursor blink
 vim.opt.guicursor = "n:block-blinkwait1000-blinkoff200-blinkon500,i:ver68-blinkwait760-blinkoff200-blinkon200";
 
+vim.g.mapleader = ","
+vim.g.maplocalleader = ","
 
 
--- ==========================================
--- KEYMAPS (Leader = Space)
--- ==========================================
-local map = vim.keymap.set
+-- ===========================================
+-- DEFINE HELPER FUNCTION map
+-- ===========================================
+local map = vim.keymap.set 
+
+-- ===========================================
+-- DEFINE HELPERS
+-- ===========================================
 
 -- Navigation & Files
 map("n", "<leader>ff", "<cmd>Telescope find_files<cr>", { desc = "Find files" })
@@ -233,7 +239,7 @@ require("lualine").setup({
 -- vim.cmd.colorscheme("tokyonight")
 -- vim.cmd.colorscheme("tokyonight-moon")
 -- vim.g.everforest_background = "soft"
-vim.cmd.colorscheme("everforest")
+-- vim.cmd.colorscheme("everforest")
 vim.opt.background = "dark"
 vim.cmd.colorscheme("oxocarbon")
 
@@ -417,3 +423,5 @@ vim.api.nvim_create_autocmd("ColorScheme", {
     })
   end,
 })
+
+vim.api.nvim_set_hl(0, "Visual", {reverse = true})
