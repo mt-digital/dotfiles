@@ -33,28 +33,8 @@ vim.opt.guicursor = "n:block-blinkwait1000-blinkoff200-blinkon500,i:ver68-blinkw
 vim.g.mapleader = ","
 vim.g.maplocalleader = ","
 
-local map = vim.keymap.set
 
-
--- ===========================================
--- DEFINE HELPERS
--- ===========================================
-
--- Navigation & Files
-map("n", "<leader>ff", "<cmd>Telescope find_files<cr>", { desc = "Find files" })
-map("n", "<leader>fg", "<cmd>Telescope live_grep<cr>", { desc = "Live grep" })
-map("n", "<leader>fb", "<cmd>Telescope buffers<cr>", { desc = "Buffers" })
-map("n", "<leader>fh", "<cmd>Telescope help_tags<cr>", { desc = "Help" })
-
--- Standard Ops
-map("n", "<leader>q", "<cmd>q<cr>", { desc = "Quit" })
-map("n", "<leader>w", "<cmd>w<cr>", { desc = "Save" })
-map("n", "<leader>d", "<cmd>lua vim.diagnostic.open_float()<cr>", { desc = "Diagnostic float" })
-
--- Surround (vim-surround replacement)
-map("n", "ys", "<cmd>lua require('nvim-surround').surround()<cr>", { desc = "Surround" })
-map("n", "cs", "<cmd>lua require('nvim-surround').change()<cr>", { desc = "Change Surround" })
-map("n", "ds", "<cmd>lua require('nvim-surround').delete()<cr>", { desc = "Delete Surround" })
+require("keymaps")
 
 -- ==========================================
 -- PLUGIN MANAGER (Packer)
@@ -84,7 +64,7 @@ require("packer").startup(function(use)
   -- UI/Theme
   use("rebelot/kanagawa.nvim")
   use("ellisonleao/gruvbox.nvim")
-  use("catppuccin/nvim")
+  -- use("catppuccin/nvim")
   use("nvim-lua/plenary.nvim")
 
   -- LSP & Tools (Mason)
@@ -116,7 +96,8 @@ require("packer").startup(function(use)
   use("nvim-lualine/lualine.nvim")
 
   -- Syntax & Editing
-  use("nvim-treesitter/nvim-treesitter", { run = ":TSUpdate" })
+  use("nvim-treesitter/nvim-treesitter",
+      { run = ":TSUpdate" })
   use("windwp/nvim-autopairs")
   -- use("numToStr/Comment.nvim")
   use("tpope/vim-commentary")
@@ -133,6 +114,7 @@ require("packer").startup(function(use)
         }
     }
   use("rouge8/neotest-rust")
+  use {'nyoom-engineering/oxocarbon.nvim'}
 
   use {
     "alexpasmantier/tv.nvim",
@@ -164,7 +146,7 @@ vim.api.nvim_create_autocmd("FileType", {
 -- ==========================================
 -- local lspconfig = require("lspconfig")
 local mason = require("mason")
--- local mason_lspconfig = require("mason-lspconfig")
+local mason_lspconfig = require("mason-lspconfig")
 local mason_tool_installer = require("mason-tool-installer")
 
 
@@ -211,118 +193,10 @@ cmp.setup({
   }),
 })
 
--- ==========================================
--- GIT & EDITING TOOLS
--- ==========================================
-require("gitsigns").setup()
-require("nvim-autopairs").setup()
+require("visuals")
+require("writing")
 
-
--- ==========================================
--- STATUSLINE (POWERLINE STYLE)
--- ==========================================
-require("lualine").setup({
-  options = {
-    -- theme = "catppuccin",
-    -- Powerline separators (requires Nerd Font)
-    component_separators = { left = "", right = "" },
-    section_separators = { left = "", right = "" },
-  },
-})
-
--- ==========================================
--- THEME
--- ==========================================
--- vim.cmd.colorscheme("tokyonight")
--- vim.cmd.colorscheme("tokyonight-moon")
--- vim.g.everforest_background = "soft"
--- vim.cmd.colorscheme("everforest")
-vim.opt.background = "dark"
-vim.cmd.colorscheme("oxocarbon")
-
-vim.keymap.set("n", ";", ":", { desc = "Remap ; to :" })
-
-map("n", "ys", "<Plug>(nvim-surround-normal)", { desc = "Surround" })
-map("n", "cs", "<Plug>(nvim-surround-change)", { desc = "Change Surround" })
-map("n", "ds", "<Plug>(nvim-surround-delete)", { desc = "Delete Surround" })
-
-map("x", "ys", "<Plug>(nvim-surround-visual)", { desc = "Surround Visual" })
-
-
--- Disable cmp for writing/text filetypes
-local writing_ft = {
-  "markdown",
-  "quarto",   -- .qmd files
-  "tex",      -- .tex, .bib
-  "plaintex",
-  "rst",      -- ReStructuredText
-  "org",      -- Org mode
-  "asciidoc",
-  "text",     -- Plain .txt
-  "gitcommit",
-  "gitmessage"
-}
-
-for _, ft in ipairs(writing_ft) do
-  vim.api.nvim_create_autocmd("FileType", {
-    pattern = ft,
-    callback = function()
-      require("cmp").setup.buffer({ enabled = false })
-
-      vim.opt_local.textwidth = 80
-      vim.opt_local.wrapmargin = 0
-      vim.opt_local.breakindent = true
-      -- vim.opt_local.formatoptions:append("a") -- Auto-wrap while typing
-      vim.opt_local.formatoptions = "t" -- auto-wrap text ("t") only; nothing else
-    end,
-  })
-end
-
-map("i", "<M-BS>", "<C-o>dB", { desc = "Delete word backward" })
-map("i", "<C-s>", "<cmd>w<cr>", { desc = "Save in insert mode" })
-
-
-require('quarto').setup{
-  debug = false,
-  closePreviewOnExit = true,
-  lspFeatures = {
-    enabled = true,
-    chunks = "curly",
-    languages = { "r", "python", "julia", "bash", "html" },
-    diagnostics = {
-      enabled = true,
-      triggers = { "BufWritePost" },
-    },
-    completion = {
-      enabled = true,
-    },
-  },
-  codeRunner = {
-    enabled = true,
-    default_method = "iron", -- "molten", "slime", "iron" or <function>
-    ft_runners = {}, -- filetype to runner, ie. `{ python = "molten" }`.
-    -- Takes precedence over `default_method`
-    never_run = { 'yaml' }, -- filetypes which are never sent to a code runner
-  },
-}
-
-vim.api.nvim_create_autocmd("ColorScheme", {
-  callback = function()
-    vim.api.nvim_set_hl(0, "StatusLineNC", { fg = "#888888", bg = "#222222" })
-    vim.api.nvim_set_hl(0, "WinSeparator", { fg = "#555555", bg = "#222222" })
-  end,
-})
-
-vim.api.nvim_create_autocmd("ColorScheme", {
-  callback = function()
-    vim.api.nvim_set_hl(0, "WinSeparator", {
-      fg = "#555555",
-      bg = "NONE",
-    })
-  end,
-})
-
-vim.api.nvim_set_hl(0, "Visual", {reverse = true})
+-- vim.api.nvim_set_hl(0, "Visual", {reverse = true})
 
 -- Set LSP to enable "virutal lines" to show errors near where they occur
 vim.diagnostic.config({
