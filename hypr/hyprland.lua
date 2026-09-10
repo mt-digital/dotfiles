@@ -8,14 +8,28 @@ hl.monitor({
     mode     = "preferred",
     position = "auto",
     scale    = "2.2",
-    -- disabled = true
+    disabled = true  -- Built-in monitor for
 })
 
+-- Monitors on K17 desktop
+-- Center landscape monitor, #1
 hl.monitor({
-    output   = "",
-    mode     = "preferred",
-    position = "auto",
-    scale    = "auto",
+    output    = "HDMI-A-1",
+    mode      = "3840x2160@144",
+    -- mode = "preferred",
+    position = "0x0",
+    scale     = 1.5,
+    transform = 0
+})
+-- Right portrait monitor, #2
+hl.monitor({
+    output    = "HDMI-A-2",
+    mode      = "2560x1440@120",
+    -- mode = "preferred",
+    -- position  = "auto",
+    position  = "2560x-200",
+    scale     = 1.5,
+    transform = 3
 })
 
 
@@ -43,9 +57,6 @@ hl.on("hyprland.start", function ()
   hl.exec_cmd(terminal)
   hl.exec_cmd("firefox")
 end)
---   hl.exec_cmd("nm-applet")
---   hl.exec_cmd("waybar & hyprpaper & firefox")
--- end)
 
 
 -------------------------------
@@ -85,7 +96,7 @@ hl.env("HYPRCURSOR_SIZE", "24")
 hl.config({
     general = {
         gaps_in  = 5,
-        gaps_out = 20,
+        gaps_out = 10,
 
         border_size = 2,
 
@@ -100,7 +111,8 @@ hl.config({
         -- Please see https://wiki.hypr.land/Configuring/Advanced-and-Cool/Tearing/ before you turn this on
         allow_tearing = false,
 
-        layout = "master",
+        -- layout = "master",
+        layout = "dwindle",
     },
 
     decoration = {
@@ -112,7 +124,7 @@ hl.config({
         inactive_opacity = 1.0,
 
         shadow = {
-            enabled      = true,
+            enabled      = false,
             range        = 4,
             render_power = 3,
             color        = 0xee1a1a1a,
