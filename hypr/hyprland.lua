@@ -7,8 +7,8 @@ hl.monitor({
     output   = "eDP-1",
     mode     = "preferred",
     position = "auto",
-    scale    = "2.2",
-    disabled = true  -- Built-in monitor for
+    scale    = "1.6",
+    -- disabled = true  -- Built-in monitor for
 })
 
 -- Monitors on K17 desktop
