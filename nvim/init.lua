@@ -36,6 +36,10 @@ vim.g.maplocalleader = ","
 vim.keymap.set("n", "<leader>ig", "<cmd>IBLToggle<CR>", {
   desc = "Toggle indent guides",
 })
+
+vim.keymap.set("n", ";", ":", { desc = "Command mode" })
+
+
 -- ==========================================
 -- PLUGIN MANAGER (Packer)
 -- ==========================================
