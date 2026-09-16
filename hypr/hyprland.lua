@@ -1,33 +1,29 @@
 ------------------
 ---- MONITORS ----
 ------------------
-
 -- See https://wiki.hypr.land/Configuring/Basics/Monitors/
-hl.monitor({
-    output   = "eDP-1",
-    mode     = "preferred",
-    position = "auto",
-    scale    = "2.2",
-    disabled = true  -- Built-in monitor for
-})
+
 
 -- Monitors on K17 desktop
 -- Center landscape monitor, #1
 hl.monitor({
     output    = "HDMI-A-1",
-    mode      = "3840x2160@144",
+    -- mode      = "1920x1080@120",
+    mode      = "2560x1440@144",
     -- mode = "preferred",
     position = "0x0",
-    scale     = 1.5,
+    scale     = 1.25,
     transform = 0
 })
+
+
 -- Right portrait monitor, #2
 hl.monitor({
     output    = "HDMI-A-2",
     mode      = "2560x1440@120",
     -- mode = "preferred",
     -- position  = "auto",
-    position  = "2560x-200",
+    position  = "2048x-288",
     scale     = 1.5,
     transform = 3
 })
@@ -53,6 +49,7 @@ local menu        = "hyprlauncher"
 -- Or execute your favorite apps at launch like this:
 --
 hl.on("hyprland.start", function ()
+  hl.exec_cmd("hyprpaper")
   hl.exec_cmd("ashell")
   hl.exec_cmd(terminal)
   hl.exec_cmd("firefox")
@@ -65,7 +62,6 @@ end)
 
 -- See https://wiki.hypr.land/Configuring/Advanced-and-Cool/Environment-variables/
 
-hl.env("XCURSOR_SIZE", "24")
 hl.env("HYPRCURSOR_SIZE", "24")
 
 
@@ -101,8 +97,8 @@ hl.config({
         border_size = 2,
 
         col = {
-            active_border   = { colors = {"rgba(33ccffee)", "rgba(00ff99ee)"}, angle = 45 },
-            inactive_border = "rgba(595959aa)",
+            active_border   = { colors = {"rgba(aaee88ee)", "rgba(ee55ffaa)"}, angle = 220 },
+            inactive_border = "rgba(aaaaaaaa)",
         },
 
         -- Set to true to enable resizing windows by clicking and dragging on borders and gaps
@@ -115,13 +111,17 @@ hl.config({
         layout = "dwindle",
     },
 
+    animations = {
+        enabled = true,
+    },
+
     decoration = {
-        rounding       = 10,
-        rounding_power = 2,
+        rounding       = 2,
+        rounding_power = 5,
 
         -- Change transparency of focused and unfocused windows
         active_opacity   = 1.0,
-        inactive_opacity = 1.0,
+        inactive_opacity = 0.90,
 
         shadow = {
             enabled      = false,
@@ -131,16 +131,13 @@ hl.config({
         },
 
         blur = {
-            enabled   = true,
+            enabled   = false,
             size      = 3,
             passes    = 1,
             vibrancy  = 0.1696,
         },
     },
 
-    animations = {
-        enabled = true,
-    },
 })
 
 -- Default curves and animations, see https://wiki.hypr.land/Configuring/Advanced-and-Cool/Animations/
@@ -174,20 +171,20 @@ hl.animation({ leaf = "zoomFactor",    enabled = true,  speed = 7,    bezier = "
 -- Ref https://wiki.hypr.land/Configuring/Basics/Workspace-Rules/
 -- "Smart gaps" / "No gaps when only"
 -- uncomment all if you wish to use that.
--- hl.workspace_rule({ workspace = "w[tv1]", gaps_out = 0, gaps_in = 0 })
--- hl.workspace_rule({ workspace = "f[1]",   gaps_out = 0, gaps_in = 0 })
--- hl.window_rule({
---     name  = "no-gaps-wtv1",
---     match = { float = false, workspace = "w[tv1]" },
---     border_size = 0,
---     rounding    = 0,
--- })
--- hl.window_rule({
---     name  = "no-gaps-f1",
---     match = { float = false, workspace = "f[1]" },
---     border_size = 0,
---     rounding    = 0,
--- })
+hl.workspace_rule({ workspace = "w[tv1]", gaps_out = 0, gaps_in = 0 })
+hl.workspace_rule({ workspace = "f[1]",   gaps_out = 0, gaps_in = 0 })
+hl.window_rule({
+    name  = "no-gaps-wtv1",
+    match = { float = false, workspace = "w[tv1]" },
+    border_size = 0,
+    rounding    = 0,
+})
+hl.window_rule({
+    name  = "no-gaps-f1",
+    match = { float = false, workspace = "f[1]" },
+    border_size = 0,
+    rounding    = 0,
+})
 
 -- See https://wiki.hypr.land/Configuring/Layouts/Dwindle-Layout/ for more
 hl.config({
@@ -233,7 +230,7 @@ hl.config({
         kb_layout  = "us,us",
         kb_variant = ",intl",   -- '`~ eg use: first ~ then a for ã; alt + c = ç;
         kb_model   = "",
-        kb_options = "grp:alt_shift_toggle",
+        kb_options = "grp:alt_shift_toggle,ctrl:swap_ralt_rctrl",
         kb_rules   = "",
 
         follow_mouse = 1,
@@ -263,13 +260,14 @@ hl.device({
 ---------------------
 ---- KEYBINDINGS ----
 ---------------------
-
 local mainMod = "SUPER" -- Sets "Windows" key as main modifier
+
+
+-- Region-based screen capture with hyprshot
+hl.bind(mainMod .. " + R", hl.dsp.exec_cmd('hyprshot -m region'))
 
 -- Example binds, see https://wiki.hypr.land/Configuring/Basics/Binds/ for more
 hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd(terminal))
-local closeWindowBind = hl.bind(mainMod .. " + C", hl.dsp.window.close())
--- closeWindowBind:set_enabled(false)
 hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"))
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
@@ -277,11 +275,27 @@ hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))    -- dwindle only
 
--- Move focus with mainMod + arrow keys
+-- Move window focus with mainMod + arrow keys...
 hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))
 hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "right" }))
 hl.bind(mainMod .. " + up",    hl.dsp.focus({ direction = "up" }))
 hl.bind(mainMod .. " + down",  hl.dsp.focus({ direction = "down" }))
+-- ...or move focus with mainMod + vim letter keys
+hl.bind(mainMod .. " + H",  hl.dsp.focus({ direction = "left" }))
+hl.bind(mainMod .. " + L", hl.dsp.focus({ direction = "right" }))
+hl.bind(mainMod .. " + K",    hl.dsp.focus({ direction = "up" }))
+hl.bind(mainMod .. " + J",  hl.dsp.focus({ direction = "down" }))
+
+-- Swap windows directionally adding SHIFT to commands above
+hl.bind(mainMod .. "+ SHIFT + left",  hl.dsp.window.swap({ direction = "left" }))
+hl.bind(mainMod .. "+ SHIFT + right", hl.dsp.window.swap({ direction = "right" }))
+hl.bind(mainMod .. "+ SHIFT + up",    hl.dsp.window.swap({ direction = "up" }))
+hl.bind(mainMod .. "+ SHIFT + down",  hl.dsp.window.swap({ direction = "down" }))
+-- ...or move swap with mainMod + vim letter keys
+hl.bind(mainMod .. "+ SHIFT + H",  hl.dsp.window.swap({ direction = "left" }))
+hl.bind(mainMod .. "+ SHIFT + L", hl.dsp.window.swap({ direction = "right" }))
+hl.bind(mainMod .. "+ SHIFT + K",    hl.dsp.window.swap({ direction = "up" }))
+hl.bind(mainMod .. "+ SHIFT + J",  hl.dsp.window.swap({ direction = "down" }))
 
 -- Switch workspaces with mainMod + [0-9]
 -- Move active window to a workspace with mainMod + SHIFT + [0-9]
@@ -317,7 +331,9 @@ hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = tr
 hl.bind("XF86AudioPlay",  hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
 hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd("playerctl previous"),   { locked = true })
 
-
+-- *** UNUSED LOCAL BINDS ***
+-- local closeWindowBind = hl.bind(mainMod .. " + C", hl.dsp.window.close())
+-- closeWindowBind:set_enabled(false)
 --------------------------------
 ---- WINDOWS AND WORKSPACES ----
 --------------------------------
@@ -336,20 +352,20 @@ local suppressMaximizeRule = hl.window_rule({
 })
 -- suppressMaximizeRule:set_enabled(false)
 
-hl.window_rule({
-    -- Fix some dragging issues with XWayland
-    name  = "fix-xwayland-drags",
-    match = {
-        class      = "^$",
-        title      = "^$",
-        xwayland   = true,
-        float      = true,
-        fullscreen = false,
-        pin        = false,
-    },
+-- hl.window_rule({
+--     -- Fix some dragging issues with XWayland
+--     name  = "fix-xwayland-drags",
+--     match = {
+--         class      = "^$",
+--         title      = "^$",
+--         xwayland   = true,
+--         float      = true,
+--         fullscreen = false,
+--         pin        = false,
+--     },
 
-    no_focus = true,
-})
+--     no_focus = true,
+-- })
 
 -- Layer rules also return a handle.
 -- local overlayLayerRule = hl.layer_rule({
