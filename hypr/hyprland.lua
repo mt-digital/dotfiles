@@ -53,6 +53,7 @@ local menu        = "hyprlauncher"
 -- Or execute your favorite apps at launch like this:
 --
 hl.on("hyprland.start", function ()
+  hl.exec_cmd("hyprpaper")
   hl.exec_cmd("ashell")
   hl.exec_cmd(terminal)
   hl.exec_cmd("firefox")
@@ -265,6 +266,8 @@ hl.device({
 ---------------------
 
 local mainMod = "SUPER" -- Sets "Windows" key as main modifier
+
+hl.bind(mainMod .. " + R", hl.dsp.exec_cmd('hyprshot -m region'))
 
 -- Example binds, see https://wiki.hypr.land/Configuring/Basics/Binds/ for more
 hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd(terminal))
