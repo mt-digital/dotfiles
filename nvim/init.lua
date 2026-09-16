@@ -33,8 +33,12 @@ vim.opt.guicursor = "n:block-blinkwait1000-blinkoff200-blinkon500,i:ver68-blinkw
 vim.g.mapleader = ","
 vim.g.maplocalleader = ","
 
+vim.keymap.set("n", "<leader>ig", "<cmd>IBLToggle<CR>", {
+  desc = "Toggle indent guides",
+})
 
-require("keymaps")
+vim.keymap.set("n", ";", ":", { desc = "Command mode" })
+
 
 -- ==========================================
 -- PLUGIN MANAGER (Packer)
@@ -102,6 +106,11 @@ require("packer").startup(function(use)
   -- use("numToStr/Comment.nvim")
   use("tpope/vim-commentary")
   use("nvim-neotest/nvim-nio")
+  use {
+    "lukas-reineke/indent-blankline.nvim",
+    main = "ibl",
+    opts = {},
+  }
 
   -- rust
   use {

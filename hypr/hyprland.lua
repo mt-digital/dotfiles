@@ -2,7 +2,13 @@
 ---- MONITORS ----
 ------------------
 -- See https://wiki.hypr.land/Configuring/Basics/Monitors/
-
+hl.monitor({
+    output   = "eDP-1",
+    mode     = "preferred",
+    position = "auto",
+    scale    = "1.6",
+    -- disabled = true  -- Built-in monitor for
+})
 
 -- Monitors on K17 desktop
 -- Center landscape monitor, #1
@@ -261,7 +267,6 @@ hl.device({
 ---- KEYBINDINGS ----
 ---------------------
 local mainMod = "SUPER" -- Sets "Windows" key as main modifier
-
 
 -- Region-based screen capture with hyprshot
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd('hyprshot -m region'))
