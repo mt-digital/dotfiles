@@ -43,6 +43,7 @@ hl.monitor({
 local terminal    = "kitty"
 local fileManager = "dolphin"
 local menu        = "hyprlauncher"
+local webBrowser  = "firefox"
 
 
 -------------------
@@ -271,6 +272,9 @@ local mainMod = "SUPER" -- Sets "Windows" key as main modifier
 -- Region-based screen capture with hyprshot
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd('hyprshot -m region'))
 
+-- Start default *w*eb browser with SUPER + W
+hl.bind(mainMod .. " + W", hl.dsp.exec_cmd(webBrowser))
+
 -- Example binds, see https://wiki.hypr.land/Configuring/Basics/Binds/ for more
 hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"))
@@ -278,7 +282,7 @@ hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
-hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))    -- dwindle only
+hl.bind(mainMod .. " + T", hl.dsp.layout("togglesplit"))    -- dwindle only
 
 -- Move window focus with mainMod + arrow keys...
 hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))
@@ -286,10 +290,10 @@ hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "right" }))
 hl.bind(mainMod .. " + up",    hl.dsp.focus({ direction = "up" }))
 hl.bind(mainMod .. " + down",  hl.dsp.focus({ direction = "down" }))
 -- ...or move focus with mainMod + vim letter keys
-hl.bind(mainMod .. " + H",  hl.dsp.focus({ direction = "left" }))
+hl.bind(mainMod .. " + H", hl.dsp.focus({ direction = "left" }))
 hl.bind(mainMod .. " + L", hl.dsp.focus({ direction = "right" }))
-hl.bind(mainMod .. " + K",    hl.dsp.focus({ direction = "up" }))
-hl.bind(mainMod .. " + J",  hl.dsp.focus({ direction = "down" }))
+hl.bind(mainMod .. " + K", hl.dsp.focus({ direction = "up" }))
+hl.bind(mainMod .. " + J", hl.dsp.focus({ direction = "down" }))
 
 -- Swap windows directionally adding SHIFT to commands above
 hl.bind(mainMod .. "+ SHIFT + left",  hl.dsp.window.swap({ direction = "left" }))
