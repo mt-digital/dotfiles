@@ -60,9 +60,10 @@ require("packer").startup(function(use)
 
   use("wbthomason/packer.nvim") -- Package manager
 
+  use("mfussenegger/nvim-lint")
+
   -- Quarto
   use("quarto-dev/quarto-nvim")
-  use("jmbuhr/nvim-config")
   use("jmbuhr/otter.nvim")
 
   -- UI/Theme
@@ -105,12 +106,12 @@ require("packer").startup(function(use)
   use("windwp/nvim-autopairs")
   -- use("numToStr/Comment.nvim")
   use("tpope/vim-commentary")
-  use("nvim-neotest/nvim-nio")
-  use {
-    "lukas-reineke/indent-blankline.nvim",
-    main = "ibl",
-    opts = {},
-  }
+  use({
+  "lukas-reineke/indent-blankline.nvim",
+  config = function()
+    require("ibl").setup()
+  end,
+})
 
   -- rust
   use {
@@ -134,6 +135,9 @@ require("packer").startup(function(use)
     end,
   }
 
+  -- R
+  use('R-nvim/R.nvim')
+
   if packer_bootstrap then
     require("packer").sync()
   end
@@ -150,32 +154,106 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
+
+-- ==========================================
+-- NEOTEST CONFIGURATION
+-- ==========================================
+local neotest = require("neotest")
+neotest.setup({
+  adapters = {
+    require("neotest-rust"),
+  },
+})
+
+vim.keymap.set("n", "<leader>tn", function()
+  neotest.run.run()
+end, { desc = "Test nearest" })
+
+vim.keymap.set("n", "<leader>tf", function()
+  neotest.run.run(vim.fn.expand("%"))
+end, { desc = "Test file" })
+
+vim.keymap.set("n", "<leader>tl", function()
+  neotest.run.run_last()
+end, { desc = "Test last" })
+
+vim.keymap.set("n", "<leader>to", function()
+  neotest.output.open({ enter = true })
+end, { desc = "Test output" })
+
+vim.keymap.set("n", "<leader>ts", function()
+  neotest.summary.toggle()
+end, { desc = "Test summary" })
+
+
 -- ==========================================
 -- LSP CONFIGURATION
 -- ==========================================
 -- local lspconfig = require("lspconfig")
-local mason = require("mason")
-local mason_lspconfig = require("mason-lspconfig")
-local mason_tool_installer = require("mason-tool-installer")
+-- local mason = require("mason")
+-- local mason_lspconfig = require("mason-lspconfig")
+-- local mason_tool_installer = require("mason-tool-installer")
 
 
 
 -- ==========================================
 -- TREESITTER
 -- ==========================================
-require("nvim-treesitter").setup({
-  ensure_installed = { "lua", "python", "javascript", "typescript", "rust" },
-  sync_install = false,
-  highlight = { enable = true },
-  indent = { enable = true },
+require("nvim-treesitter").install({
+  "lua",
+  "python",
+  "javascript",
+  "typescript",
+  "rust",
+  "toml",
+  "yaml",
+  "bash",
+  "r"
 })
--- OTHER RUST STUFF
-vim.lsp.enable("rust_analyzer")
-require("neotest").setup({
-  adapters = {
-    require("neotest-rust"),
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = {
+    "lua",
+    "python",
+    "javascript",
+    "typescript",
+    "rust",
+    "toml",
+    "yaml",
+    "bash",
+  },
+  callback = function()
+    vim.treesitter.start()
+  end,
+})
+
+-- ==========================================
+-- RUST LSP CONFIG
+-- ==========================================
+vim.lsp.config("rust_analyzer", {
+  capabilities = require("cmp_nvim_lsp").default_capabilities(),
+
+  settings = {
+    ["rust-analyzer"] = {
+      check = {
+        command = "clippy",
+      },
+    },
   },
 })
+vim.lsp.enable("rust_analyzer")
+
+vim.keymap.set("n", "<leader>cf", function()
+  vim.lsp.buf.format()
+end, { desc = "Format code" })
+
+vim.keymap.set("n", "<leader>ci", function()
+  vim.lsp.inlay_hint.enable(
+    not vim.lsp.inlay_hint.is_enabled()
+  )
+end, { desc = "Toggle inlay hints" })
+
+
 
 -- ==========================================
 -- COMPLETION (CMP)
@@ -221,4 +299,18 @@ vim.api.nvim_create_autocmd("BufWritePre", {
     callback = function()
         vim.cmd([[%s/\s\+$//e]])
     end,
+})
+
+
+vim.lsp.config['r_language_server'] = {
+	settings = {
+		filetypes = { "r", "rmd" },
+	},
+}
+
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "r", "rmd" },
+	callback = function()
+		vim.lsp.start(vim.lsp.config["r_language_server"])
+	end,
 })

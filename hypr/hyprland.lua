@@ -1,38 +1,36 @@
 ------------------
 ---- MONITORS ----
 ------------------
--- See https://wiki.hypr.land/Configuring/Basics/Monitors/
-hl.monitor({
-    output   = "eDP-1",
-    mode     = "preferred",
-    position = "auto",
-    scale    = "1.6",
-    -- disabled = true  -- Built-in monitor for
-})
 
--- Monitors on K17 desktop
+-- See https://wiki.hypr.land/Configuring/Basics/Monitors/
+
+
+--- *** Monitors on K17 desktop *** ---
+
 -- Center landscape monitor, #1
 hl.monitor({
     output    = "HDMI-A-1",
-    -- mode      = "1920x1080@120",
-    mode      = "2560x1440@144",
-    -- mode = "preferred",
+    mode      = "3840x2160@60",
     position = "0x0",
-    scale     = 1.25,
+    scale     = 2.0,
     transform = 0
 })
+-- Bind center monitor to workspace 1
+hl.workspace_rule({workspace = "1", monitor = "DP-1"})
 
 
 -- Right portrait monitor, #2
 hl.monitor({
     output    = "HDMI-A-2",
-    mode      = "2560x1440@120",
+    mode      = "2560x1440@60",
     -- mode = "preferred",
     -- position  = "auto",
-    position  = "2048x-288",
-    scale     = 1.5,
+    position  = "1920x-710",
+    -- position  = "3840x-576",
+    scale     = 1.00,
     transform = 3
 })
+hl.workspace_rule({workspace = "2", monitor = "HDMI-A-2"})
 
 
 ---------------------
@@ -57,8 +55,10 @@ local menu        = "hyprlauncher"
 hl.on("hyprland.start", function ()
   hl.exec_cmd("hyprpaper")
   hl.exec_cmd("ashell")
-  hl.exec_cmd(terminal)
-  hl.exec_cmd("firefox")
+
+  -- Uncomment these, or add others, to start user programs at hyprland startup
+  -- hl.exec_cmd(terminal)
+  -- hl.exec_cmd("firefox")
 end)
 
 
