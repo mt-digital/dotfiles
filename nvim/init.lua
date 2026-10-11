@@ -7,7 +7,6 @@ vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
 vim.opt.expandtab = true
 vim.opt.smartindent = true
-vim.opt.wrap = false
 vim.opt.swapfile = false
 vim.opt.backup = false
 vim.opt.undofile = true
@@ -27,6 +26,7 @@ vim.opt.wrap = true              -- Enable soft wrapping
 vim.opt.linebreak = true         -- Break at word boundaries, not mid-word
 vim.opt.showbreak = "↪ "         -- Optional: visual indicator for wrapped lines
 vim.opt.hlsearch = false
+
 -- Cursor blink
 vim.opt.guicursor = "n:block-blinkwait1000-blinkoff200-blinkon500,i:ver68-blinkwait760-blinkoff200-blinkon200";
 
@@ -185,15 +185,15 @@ vim.keymap.set("n", "<leader>ts", function()
   neotest.summary.toggle()
 end, { desc = "Test summary" })
 
+vim.keymap.set("t", "<Esc>", [[<C-\><C-n>]]);
 
--- ==========================================
--- LSP CONFIGURATION
--- ==========================================
--- local lspconfig = require("lspconfig")
--- local mason = require("mason")
--- local mason_lspconfig = require("mason-lspconfig")
--- local mason_tool_installer = require("mason-tool-installer")
+vim.keymap.set("n", "<C-b>", "<C-w>", { remap = true })
 
+vim.keymap.set("n", "<C-t>", ":split | terminal<CR>i")
+
+vim.keymap.set("n", "<leader>s", ":source $MYVIMRC<CR>")
+
+vim.keymap.set("n", "<leader>l", ":set spell<CR>")
 
 
 -- ==========================================
@@ -221,6 +221,7 @@ vim.api.nvim_create_autocmd("FileType", {
     "toml",
     "yaml",
     "bash",
+    "r"
   },
   callback = function()
     vim.treesitter.start()
@@ -280,10 +281,6 @@ cmp.setup({
   }),
 })
 
-require("visuals")
-require("writing")
-
--- vim.api.nvim_set_hl(0, "Visual", {reverse = true})
 
 -- Set LSP to enable "virutal lines" to show errors near where they occur
 vim.diagnostic.config({
@@ -313,4 +310,52 @@ vim.api.nvim_create_autocmd("FileType", {
 	callback = function()
 		vim.lsp.start(vim.lsp.config["r_language_server"])
 	end,
+})
+
+
+-- ==========================================
+-- R LINTING
+-- ==========================================
+local lint = require("lint")
+
+lint.linters.lintr = {
+  cmd = "Rscript",
+  stdin = false,
+  args = {
+    "-e",
+    "lintr::lint(commandArgs(TRUE)[1])",
+    "--args",
+  },
+  stream = "stdout",
+  ignore_exitcode = true,
+  parser = require("lint.parser").from_errorformat(
+    "%f:%l:%c: %m",
+    {
+      source = "lintr",
+    }
+  ),
+}
+
+lint.linters_by_ft = {
+  r = { "lintr" },
+  rmd = { "lintr" },
+}
+
+local r_lint_timer = vim.uv.new_timer()
+
+vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
+  pattern = { "*.R", "*.r" },
+  callback = function()
+    r_lint_timer:stop()
+    r_lint_timer:start(1000, 0, vim.schedule_wrap(function()
+      lint.try_lint("lintr")
+    end))
+  end,
+})
+
+vim.api.nvim_create_autocmd("BufWritePost", {
+  pattern = { "*.R", "*.r" },
+  callback = function()
+    lint.try_lint("lintr")
+  end,
 })
