@@ -255,6 +255,16 @@ vim.keymap.set("n", "<leader>ci", function()
 end, { desc = "Toggle inlay hints" })
 
 
+-- vim.lsp.config("rust_analyzer", {
+--   settings = {
+--     ["rust-analyzer"] = {
+--       checkOnSave = true,
+--       check = {
+--         command = "check",
+--       },
+--     },
+--   },
+-- })
 
 -- ==========================================
 -- COMPLETION (CMP)
