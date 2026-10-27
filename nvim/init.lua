@@ -135,6 +135,15 @@ require("packer").startup(function(use)
     end,
   }
 
+  use {
+    "stevearc/aerial.nvim",
+    config = function()
+      require("aerial").setup({
+        backends = { "lsp", "treesitter" },
+      })
+    end,
+  }
+
   -- R
   use('R-nvim/R.nvim')
 
@@ -369,3 +378,6 @@ vim.api.nvim_create_autocmd("BufWritePost", {
     lint.try_lint("lintr")
   end,
 })
+
+
+vim.cmd.colorscheme("oxocarbon")
